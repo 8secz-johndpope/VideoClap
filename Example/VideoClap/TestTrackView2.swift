@@ -228,6 +228,8 @@ class TestTrackView2: UIViewController {
         
     }
     
+    
+    // THIS DOESN'T WORK - need to pinch the scrollview to get the view to refresh properly. WHY??
     func attemptToRefreshScrollview(){
         DispatchQueue.main.async {
             print("BEGIN")
@@ -552,6 +554,21 @@ extension TestTrackView2: UIScrollViewDelegate {
         
         scaleView.reloadData(in: visibleRect())
         mainTrackView.reloadData(in: visibleRect())
+        
+//        if player.isPlaying{
+            let duration = player.currentItem?.asset.duration ?? CMTime(seconds: 1.0)
+//        let time = CMTime(seconds: duration.seconds * Double(percentage))
+        var progress =  NowPlayingProgress()
+        progress.duration = duration.seconds
+        progress.elapsedTime =  Double( duration.seconds * Double(percentage))
+        self.progressBar.progress = progress
+//            player.seekSmoothly(to: time) { [weak self] _ in
+////                guard let self = self else { return }
+//              //  self.timer()
+//            }
+//        }
+//
+        
     }
     
 }
@@ -563,7 +580,10 @@ extension TestTrackView2: VCMainTrackViewDelegate {
     }
     
     func didSelectItemAt(_ model: VCImageTrackViewModel, index: Int) {
-        
+        if let config = model.cellConfig as? VideoCellConfig{
+            print("videoTrack:",config.videoTrack?.mediaURL)
+        }
+        print("index:",index)
     }
     
     func preReloadModel(_ model: VCImageTrackViewModel, visibleRect: CGRect) {
