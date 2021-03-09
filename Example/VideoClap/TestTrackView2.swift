@@ -109,8 +109,8 @@ class TestTrackView2: UIViewController {
         return view
     }()
     
-    var models: [VCImageTrackViewModel] = []
-    /*lazy var models: [VCImageTrackViewModel] = {
+   // var models: [VCImageTrackViewModel] = []
+    lazy var models: [VCImageTrackViewModel] = {
         var models: [VCImageTrackViewModel] = []
         for index in 0..<8 {
             if Bool.random() {
@@ -177,7 +177,7 @@ class TestTrackView2: UIViewController {
             }
         }
         return models
-    }()*/
+    }()
     
     lazy var pinchGR: UIPinchGestureRecognizer = {
         let pinchGR = UIPinchGestureRecognizer(target: self, action: #selector(pinchGRHandler(_:)))
