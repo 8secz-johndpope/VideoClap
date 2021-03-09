@@ -161,7 +161,7 @@ class ViewController: UIViewController {
             }
             track.trajectory = trajectory
             track.id = "imageTrack"
-            track.timeRange = CMTimeRange(start: 0.0, duration: 5.0)
+            track.timeRange = CMTimeRange(start: 1.0, duration: 3.0)
             track.mediaURL = resourceURL(filename: "test3.jpg")
 //            track.cropedRect = CGRect(x: 0.5, y: 0.2, width: 0.5, height: 0.5)
             trackBundle.imageTracks.append(track)
@@ -196,7 +196,7 @@ class ViewController: UIViewController {
             let lamination = VCLaminationTrackDescription()
             lamination.indexPath = IndexPath(item: 1, section: 999)
             lamination.id = "laminationTrack"
-            lamination.timeRange = CMTimeRange(start: .zero, duration: CMTime(seconds: 10))
+            lamination.timeRange = CMTimeRange(start: .zero, duration: CMTime(seconds: 1))
             lamination.mediaURL = resourceURL(filename: "Anniversary1.png")
             trackBundle.imageTracks.append(lamination)
         }
@@ -500,6 +500,7 @@ class ViewController: UIViewController {
                 
             } completionHandler: { [weak self] (url, error) in
                 guard let self = self else { return }
+                SVProgressHUD.dismiss()
                 self.vcplayer.disableManualRenderingMode()
                 if let url = url {
                     PHPhotoLibrary.shared().performChanges {

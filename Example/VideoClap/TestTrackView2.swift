@@ -125,16 +125,32 @@ class TestTrackView2: UIViewController {
     
     let timeControl: VCTimeControl = VCTimeControl()
     
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        player.realTimeRenderTarget = self.containerView
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     func populateModels(){
         print("PRE-populating videos")
         for index in 0..<8 {
             if Bool.random() {
                 let videoTrack = VCVideoTrackDescription()
                 videoTrack.mediaURL = resourceURL(filename: "video1.mp4")
-                var start: CMTime = .zero
-                if (0..<models.count).contains(index - 1) {
-                    start = models[index - 1].cellConfig!.targetTimeRange()!.end
-                }
+//                var start: CMTime = .zero
+//                if (0..<models.count).contains(index - 1) {
+//                    start = models[index - 1].cellConfig!.targetTimeRange()!.end
+//                }
+                
+                let tracks = self.trackBundle.imageTracks + self.trackBundle.videoTracks
+                let start = tracks.max { (lhs, rhs) -> Bool in
+                    return lhs.timeRange.end < rhs.timeRange.end
+                }?.timeRange.end ?? .zero
+                print("start:",start)
+                
                 let duration = AVAsset(url: videoTrack.mediaURL.unsafelyUnwrapped).duration
                 let source = CMTimeRange(start: 0, end: duration.seconds)
                 let target = CMTimeRange(start: start.seconds, duration: source.duration.seconds)
@@ -150,10 +166,16 @@ class TestTrackView2: UIViewController {
             } else {
                 let videoTrack = VCVideoTrackDescription()
                 videoTrack.mediaURL = resourceURL(filename: "video0.mp4")
-                var start: CMTime = .zero
-                if (0..<models.count).contains(index - 1) {
-                    start = models[index - 1].cellConfig!.targetTimeRange()!.end
-                }
+//                var start: CMTime = .zero
+//                if (0..<models.count).contains(index - 1) {
+//                    start = models[index - 1].cellConfig!.targetTimeRange()!.end
+//                }
+                
+                let tracks = self.trackBundle.imageTracks + self.trackBundle.videoTracks
+                let start = tracks.max { (lhs, rhs) -> Bool in
+                    return lhs.timeRange.end < rhs.timeRange.end
+                }?.timeRange.end ?? .zero
+                print("start:",start)
                 let duration = AVAsset(url: videoTrack.mediaURL.unsafelyUnwrapped).duration
                 let source = CMTimeRange(start: 0, end: duration.seconds)
                 let target = CMTimeRange(start: start.seconds, duration: source.duration.seconds)
@@ -174,10 +196,17 @@ class TestTrackView2: UIViewController {
             if Bool.random() {
                 let imageTrack = VCImageTrackDescription()
                 imageTrack.mediaURL = resourceURL(filename: "4.jpg")
-                var start: CMTime = .zero
-                if (0..<models.count).contains(index - 1) {
-                    start = models[index - 1].cellConfig!.targetTimeRange()!.end
-                }
+//                var start: CMTime = .zero
+//                if (0..<models.count).contains(index - 1) {
+//                    start = models[index - 1].cellConfig!.targetTimeRange()!.end
+//                }
+                
+                let tracks = self.trackBundle.imageTracks + self.trackBundle.videoTracks
+                let start = tracks.max { (lhs, rhs) -> Bool in
+                    return lhs.timeRange.end < rhs.timeRange.end
+                }?.timeRange.end ?? .zero
+                
+                print("start:",start)
                 imageTrack.timeRange = CMTimeRange(start: start.seconds, duration: 3.0)
                 
                 // actually add it
@@ -191,10 +220,16 @@ class TestTrackView2: UIViewController {
             } else {
                 let imageTrack = VCImageTrackDescription()
                 imageTrack.mediaURL = resourceURL(filename: "3.jpg")
-                var start: CMTime = .zero
-                if (0..<models.count).contains(index - 1) {
-                    start = models[index - 1].cellConfig!.targetTimeRange()!.end
-                }
+                
+                let tracks = self.trackBundle.imageTracks + self.trackBundle.videoTracks
+                let start = tracks.max { (lhs, rhs) -> Bool in
+                    return lhs.timeRange.end < rhs.timeRange.end
+                }?.timeRange.end ?? .zero
+                print("start:",start)
+//                var start: CMTime = .zero
+//                if (0..<models.count).contains(index - 1) {
+//                    start = models[index - 1].cellConfig!.targetTimeRange()!.end
+//                }
                 imageTrack.timeRange = CMTimeRange(start: start.seconds, duration: 3.0)
                 
                 // actually add it
@@ -249,15 +284,30 @@ class TestTrackView2: UIViewController {
         addPeriodicTimeObserver()
         
         
-        
+        initPlay()
         
     }
+    
+    func initPlay() {
+        vcplayer.reload()
+        playButton.isSelected = true
+        
+        player.observePlayingTime { [weak self] (time: CMTime) in
+            guard let self = self else { return }
+            self.timer()
+        }
+        
+        player.play()
+    }
+    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        export(fileName: "test.mp4"){}
+//        export(fileName: "test.mov"){}
     }
     
+    
+    // THIS CREATES BLACK VIDEO - but ViewController renders out fine - even with additional videos added
     func export(fileName: String?, completion: @escaping () -> Void) {
         print("videoDescription.trackBundle:",videoDescription.trackBundle)
         let trackBundle = videoDescription.trackBundle
@@ -333,8 +383,10 @@ class TestTrackView2: UIViewController {
             self.timeControl.setTime(currentTime:CMTime(seconds: 0))
             
             self.scaleView.reloadData(in: self.visibleRect())
-            self.mainTrackView.collectionView.reloadData()
+//            self.mainTrackView.collectionView.reloadData()
+            self.mainTrackView.reloadData(in: self.visibleRect())
             self.vcplayer.reload()
+            self.vcplayer.reloadFrame()
             
             self.scrollViewDidScroll(self.scrollView)
             
@@ -452,20 +504,7 @@ class TestTrackView2: UIViewController {
     }
     
     
-    
-    func initPlay() {
-        vcplayer.reload()
-        playButton.isSelected = true
-        
-        player.observePlayingTime { [weak self] (time: CMTime) in
-            guard let self = self else { return }
-            self.timer()
-        }
-        
-        player.play()
-    }
-    
-    
+
     
     @objc func durationSliderValueChanged(slider: UISlider, event: UIEvent) {
         
@@ -587,9 +626,9 @@ class TestTrackView2: UIViewController {
     }
     
     @objc func exportButtonDidTap(_ sender: UIBarButtonItem?) {
-        export(fileName: "test.mp4"){}
-        return
-       /* let tracks = self.trackBundle.imageTracks + self.trackBundle.videoTracks
+        //export(fileName: "test.mp4"){}
+       
+        let tracks = self.trackBundle.imageTracks + self.trackBundle.videoTracks
         if (tracks.count == 0 ){
             print("FATAL - no tracks")
             return
@@ -612,6 +651,7 @@ class TestTrackView2: UIViewController {
                     } completionHandler: { _, _ in
                         LLog("finish ")
                         SVProgressHUD.dismiss()
+                        self.vcplayer.reloadFrame()
                     }
                 } else if let error = error {
                     LLog(error)
@@ -621,7 +661,7 @@ class TestTrackView2: UIViewController {
             playButton.isSelected = false
         } catch let error {
             LLog(error)
-        }*/
+        }
     }
     
     
@@ -821,6 +861,7 @@ class NowPlayingProgressBar : UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
        // elapsedLabel.font = .preferredFont(forTextStyle: .callout, design: .rounded)
         elapsedLabel.textColor = .secondaryLabel
         elapsedLabel.textAlignment = .left
