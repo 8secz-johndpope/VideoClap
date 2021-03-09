@@ -17,6 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         let vc = TestTrackView2()
         let nav = NavigationController(rootViewController: vc)
+//        let nav = NavigationController(rootViewController: MainViewController())
         window = TestWindow(frame: UIScreen.main.bounds)
         window?.backgroundColor = UIColor.white
         window?.rootViewController = nav

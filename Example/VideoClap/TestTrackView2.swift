@@ -109,8 +109,8 @@ class TestTrackView2: UIViewController {
         return view
     }()
     
-   // var models: [VCImageTrackViewModel] = []
-    lazy var models: [VCImageTrackViewModel] = {
+    var models: [VCImageTrackViewModel] = []
+    /*lazy var models: [VCImageTrackViewModel] = {
         var models: [VCImageTrackViewModel] = []
         for index in 0..<8 {
             if Bool.random() {
@@ -177,7 +177,7 @@ class TestTrackView2: UIViewController {
             }
         }
         return models
-    }()
+    }()*/
     
     lazy var pinchGR: UIPinchGestureRecognizer = {
         let pinchGR = UIPinchGestureRecognizer(target: self, action: #selector(pinchGRHandler(_:)))
@@ -224,21 +224,32 @@ class TestTrackView2: UIViewController {
         
         
 
-    //    mergeClipsRenderDown()
     }
     
     func attemptToRefreshScrollview(){
-        let duration = models.max { (lhs, rhs) -> Bool in
-            return (lhs.cellConfig?.targetTimeRange()?.end ?? .zero) < (rhs.cellConfig?.targetTimeRange()?.end ?? .zero)
-        }?.cellConfig?.targetTimeRange()?.end ?? .zero
-        timeControl.setTime(duration: duration)
-        timeControl.setScale(1)
-        
-        
-        mainTrackView.layout.invalidateLayout()
-        mainTrackView.collectionView.reloadData()
-        
-        
+        DispatchQueue.main.async {
+            print("BEGIN")
+            self.exportButtonDidTap(nil)
+            print("END")
+            let duration = self.models.max { (lhs, rhs) -> Bool in
+                return (lhs.cellConfig?.targetTimeRange()?.end ?? .zero) < (rhs.cellConfig?.targetTimeRange()?.end ?? .zero)
+            }?.cellConfig?.targetTimeRange()?.end ?? .zero
+            print("duration:",duration)
+            self.timeControl.setTime(duration: duration)
+            self.timeControl.setScale(1)
+            
+            
+
+            self.timeControl.setTime(currentTime:CMTime(seconds: 0))
+            
+            self.scaleView.reloadData(in: self.visibleRect())
+            self.mainTrackView.collectionView.reloadData()
+            self.vcplayer.reload()
+            
+            self.scrollViewDidScroll(self.scrollView)
+            
+            
+        }
     }
     
  
@@ -259,6 +270,7 @@ class TestTrackView2: UIViewController {
             make.left.right.equalToSuperview()
             make.bottom.equalTo(scrollView.snp.top).offset(-44)
         }
+        containerView.backgroundColor = .yellow
         slider.snp.makeConstraints { (make) in
             make.height.equalTo(44)
             make.bottom.equalTo(scrollView.snp.top)
@@ -436,6 +448,11 @@ class TestTrackView2: UIViewController {
             self.timelabel.text = timelabelText
             self.playButton.isSelected = isSelected
             self.slider.value = value
+            
+            let percentage = (self.scrollView.contentOffset.x + self.scrollView.contentInset.left) / (self.scrollView.contentSize.width)
+            print("current percent:",percentage)
+            let offset = CGPoint(x:self.scrollView.contentSize.width * CGFloat(value) + self.scrollView.contentInset.left, y:self.scrollView.contentOffset.y)
+            self.scrollView.setContentOffset(offset, animated: true)
         }
     }
     
@@ -453,8 +470,10 @@ class TestTrackView2: UIViewController {
         }
     }
     
-    @objc func exportButtonDidTap(_ sender: UIBarButtonItem) {
+    @objc func exportButtonDidTap(_ sender: UIBarButtonItem?) {
         do {
+            self.vcplayer.videoDescription = self.videoDescription.mutableCopy() as! VCVideoDescription
+            
             // this should be using the videoClap in this vc - not inside vcplayer..... eg.exportVideoClap
             try self.vcplayer.enableManualRenderingMode()
             _ = self.vcplayer.export(size: KResolution720x1280) { (progress) in
@@ -479,6 +498,10 @@ class TestTrackView2: UIViewController {
     }
     
     @objc func addButtonDidTap(_ sender: UIBarButtonItem) {
+        self.perform(#selector(presentImport), with: nil, afterDelay: 0.1) // avoid ui blocking
+    }
+    
+    @objc func presentImport(){
         let picker = UIImagePickerController()
         picker.sourceType = .photoLibrary
         picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary) ?? []
