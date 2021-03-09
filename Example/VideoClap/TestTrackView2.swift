@@ -19,6 +19,7 @@ import Photos
 import VideoClap
 import SSPlayer
 import MobileCoreServices
+import SVProgressHUD
 class TestTrackView2: UIViewController {
     
     var videoDescription: VCVideoDescription {
@@ -226,6 +227,7 @@ class TestTrackView2: UIViewController {
         addPeriodicTimeObserver()
         
         
+        exportButtonDidTap(nil)
     }
     
     
@@ -501,13 +503,21 @@ class TestTrackView2: UIViewController {
     }
     
     @objc func exportButtonDidTap(_ sender: UIBarButtonItem?) {
+        
+        let tracks = self.trackBundle.imageTracks + self.trackBundle.videoTracks
+        if (tracks.count == 0 ){
+            print("FATAL - no tracks")
+            return
+        }
         do {
             self.vcplayer.videoDescription = self.videoDescription.mutableCopy() as! VCVideoDescription
             
             // this should be using the videoClap in this vc - not inside vcplayer..... eg.exportVideoClap
             try self.vcplayer.enableManualRenderingMode()
-            _ = self.vcplayer.export(size: KResolution720x1280) { (progress) in
+            _ = self.vcplayer.export(size: KResolution1920x1080) { (progress) in
                 LLog(progress.fractionCompleted)
+                SVProgressHUD.showProgress(Float(progress.fractionCompleted), status: "Building...")
+                
             } completionHandler: { [weak self] (url, error) in
                 guard let self = self else { return }
                 self.vcplayer.disableManualRenderingMode()
@@ -516,9 +526,11 @@ class TestTrackView2: UIViewController {
                         PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
                     } completionHandler: { _, _ in
                         LLog("finish ")
+                        SVProgressHUD.dismiss()
                     }
                 } else if let error = error {
                     LLog(error)
+                    SVProgressHUD.dismiss()
                 }
             }
             playButton.isSelected = false
@@ -583,6 +595,13 @@ extension TestTrackView2: VCMainTrackViewDelegate {
         if let config = model.cellConfig as? VideoCellConfig{
             print("videoTrack:",config.videoTrack?.mediaURL)
         }
+        if let config = model.cellConfig as? ImageCellConfig{
+            print("imageTrack:",config.imageTrack)
+        }
+        
+//        if let config = model.cellConfig as? AudioCellConfig{
+//            print("imageTrack:",config.audi)
+//        }
         print("index:",index)
     }
     

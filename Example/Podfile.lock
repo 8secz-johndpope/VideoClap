@@ -5,6 +5,7 @@ PODS:
   - SDWebImage/Core (5.10.0)
   - SnapKit (4.2.0)
   - SSPlayer (0.1.0)
+  - SVProgressHUD (2.2.5)
   - SwiftyBeaver (1.9.3)
   - SwiftyTimer (2.1.0)
   - VideoClap (0.1.0):
@@ -146,6 +147,7 @@ PODS:
 DEPENDENCIES:
   - SnapKit (= 4.2.0)
   - SSPlayer (from `https://github.com/lai001/SSPlayer.git`)
+  - SVProgressHUD
   - SwiftyBeaver
   - VideoClap (from `../`)
 
@@ -154,6 +156,7 @@ SPEC REPOS:
     - lottie-ios
     - SDWebImage
     - SnapKit
+    - SVProgressHUD
     - SwiftyBeaver
     - SwiftyTimer
 
@@ -173,10 +176,11 @@ SPEC CHECKSUMS:
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
   SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
   SSPlayer: 6299c67bde2d7a5f64292dccac0e6ddd45bfdd91
+  SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   SwiftyBeaver: 2e8acd6fc90c6d0a27055867a290794926d57c02
   SwiftyTimer: 02dd6cf10cbc71cbf67cec494f6e5eb782102543
   VideoClap: 3ba84a2c5ba6e98c52ad196fcb66bc6b252bbcf9
 
-PODFILE CHECKSUM: 5552830189b08e6ae4bc11840cdb9c7da091963f
+PODFILE CHECKSUM: 69d47f040bc6a0f1f18bbc8252001914d3830dbc
 
 COCOAPODS: 1.10.1

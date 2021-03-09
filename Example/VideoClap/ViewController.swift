@@ -13,7 +13,7 @@ import Photos
 import VideoClap
 import SSPlayer
 import MobileCoreServices
-
+import SVProgressHUD
 class NavigationController: UINavigationController {
     
 }
@@ -496,6 +496,8 @@ class ViewController: UIViewController {
             try self.vcplayer.enableManualRenderingMode()
             _ = self.vcplayer.export(size: KResolution720x1280) { (progress) in
                 LLog(progress.fractionCompleted)
+                SVProgressHUD.showProgress(Float(progress.fractionCompleted), status: "Building...")
+                
             } completionHandler: { [weak self] (url, error) in
                 guard let self = self else { return }
                 self.vcplayer.disableManualRenderingMode()
