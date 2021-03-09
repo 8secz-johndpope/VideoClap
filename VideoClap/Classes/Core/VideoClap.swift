@@ -74,6 +74,11 @@ open class VideoClap: NSObject, VCMediaServicesObserver {
     
     public func playerItemForPlay() throws -> AVPlayerItem {
         let trackBundle = videoDescription.trackBundle
+        if (trackBundle.audioTracks.count == 0) && (trackBundle.videoTracks.count == 0) &&  (trackBundle.imageTracks.count == 0) {
+            print("FATAL:no audio / video or image tracks!!")
+            throw VCVideoCompositorError.internalError
+        }
+       
         trackBundle.audioTracks.forEach({ $0.prepare(description: videoDescription) })
         trackBundle.videoTracks.forEach({ $0.prepare(description: videoDescription) })
         trackBundle.imageTracks.forEach({ $0.prepare(description: videoDescription) })

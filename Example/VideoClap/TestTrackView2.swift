@@ -43,7 +43,7 @@ class TestTrackView2: UIViewController {
         return player
     }()
     
-    var exportVideoClap = VideoClap()
+//    var exportVideoClap = VideoClap()
     
     lazy var slider: UISlider = {
         let slider = UISlider()
@@ -109,7 +109,8 @@ class TestTrackView2: UIViewController {
         return view
     }()
     
-    lazy var models: [VCImageTrackViewModel] = {
+    var models: [VCImageTrackViewModel] = []
+    /*lazy var models: [VCImageTrackViewModel] = {
         var models: [VCImageTrackViewModel] = []
         for index in 0..<8 {
             if Bool.random() {
@@ -176,7 +177,7 @@ class TestTrackView2: UIViewController {
             }
         }
         return models
-    }()
+    }()*/
     
     lazy var pinchGR: UIPinchGestureRecognizer = {
         let pinchGR = UIPinchGestureRecognizer(target: self, action: #selector(pinchGRHandler(_:)))
@@ -223,12 +224,24 @@ class TestTrackView2: UIViewController {
         
         
 
-        mergeClipsRenderDown()
+    //    mergeClipsRenderDown()
     }
     
-    func mergeClipsRenderDown(){
-        export(fileName: "test.mp4") { }
+    func attemptToRefreshScrollview(){
+        let duration = models.max { (lhs, rhs) -> Bool in
+            return (lhs.cellConfig?.targetTimeRange()?.end ?? .zero) < (rhs.cellConfig?.targetTimeRange()?.end ?? .zero)
+        }?.cellConfig?.targetTimeRange()?.end ?? .zero
+        timeControl.setTime(duration: duration)
+        timeControl.setScale(1)
+        
+        
+        mainTrackView.layout.invalidateLayout()
+        mainTrackView.collectionView.reloadData()
+        
+        
     }
+    
+ 
     func setupNavBar() {
         navigationItem.rightBarButtonItems = [exportButton, addButton]
     }
@@ -330,94 +343,6 @@ class TestTrackView2: UIViewController {
     }
     
     
-    func getTransition(type: TransitionType) -> VCTransitionProtocol {
-        let transition: VCTransitionProtocol
-        switch type {
-        case .Alpha:
-            transition = VCAlphaTransition()
-        case .BarsSwipe:
-            transition = VCBarsSwipeTransition()
-        case .Blur:
-            transition = VCBlurTransition()
-        case .CopyMachine:
-            transition = VCCopyMachineTransition()
-        case .Dissolve:
-            transition = VCDissolveTransition()
-        case .Flip:
-            transition = VCFlipTransition()
-        case .IceMelting:
-            transition = VCIceMeltingTransition()
-        case .Slide:
-            transition = VCSlideTransition()
-        case .Swirl:
-            transition = VCSwirlTransition()
-        case .Vortex:
-            let v = VCVortexTransition()
-            v.type = .single
-            transition = v
-        case .Wave:
-            transition = VCWaveTransition()
-        case .Wipe:
-            transition = VCWipeTransition()
-        case .Windowslice:
-            transition = VCWindowsliceTransition()
-        case .PageCurl:
-            transition = VCPageCurlWithShadowTransition()
-        case .Doorway:
-            transition = VCDoorwayTransition()
-        case .Squareswire:
-            transition = VCSquareswireTransition()
-        case .Mod:
-            transition = VCModTransition()
-        case .Cube:
-            transition = VCCubeTransition()
-        case .Translation:
-            transition = VCTranslationTransition().config(closure: {
-                $0.translationType = .left
-                $0.translation = self.videoDescription.renderSize.width
-            })
-        case .Heart:
-            transition = VCHeartTransition()
-        case .Noise:
-            transition = VCNoiseTransition()
-        case .Megapolis:
-            transition = VCMegapolis2DPatternTransition()
-        case .Spread:
-            transition = VCSpreadTransition()
-        case .Bounce:
-            transition = VCBounceTransition()
-        }
-        return transition
-    }
-    
-    func allCasesExportVideo() {
-        DispatchQueue(label: "allCasesExportVideo").async {
-            let group = DispatchGroup()
-            for type in TransitionType.allCases {
-                group.enter()
-                let transition = VCTransition()
-                transition.transition = self.getTransition(type: type)
-                self.addTransition(transition)
-                self.export(fileName: type.rawValue + ".mov") {
-                    group.leave()
-                }
-                group.wait()
-            }
-        }
-    }
-    
-    @objc func transitionChange(_ sender: Notification) {
-        let type = sender.userInfo?["transitionType"] as! TransitionType
-        videoDescription.transitions.first.unsafelyUnwrapped.transition = getTransition(type: type)
-        vcplayer.reloadFrame()
-    }
-    
-    func addTransition(_ trasition: VCTransition) {
-        trasition.fromTrack = videoDescription.trackBundle.imageTracks.first(where: { $0.id == "imageTrack" })
-        trasition.toTrack = videoDescription.trackBundle.videoTracks.first(where: { $0.id == "videoTrack" })
-        trasition.range = VCRange(left: 0.5, right: 0.5)
-        videoDescription.transitions = [trasition]
-    }
     
     func initPlay() {
         vcplayer.reload()
@@ -431,51 +356,7 @@ class TestTrackView2: UIViewController {
         player.play()
     }
     
-    func export(fileName: String?, completion: @escaping () -> Void) {
-        exportVideoClap.videoDescription = self.videoDescription.mutableCopy() as! VCVideoDescription
-        exportVideoClap.videoDescription.renderSize = KResolution1920x1080
-        exportVideoClap.videoDescription.renderScale = 1.0
-        
-        exportVideoClap.export { (progress) in
-            print(progress.fractionCompleted, fileName ?? "")
-        } completionHandler: { (url, error) in
-            if let error = error {
-                LLog(error)
-            }
-            #if targetEnvironment(simulator)
-            
-            if let url = url {
-                do {
-                    let folder = "/Users/laimincong/Desktop/Temp/Videos/" // replace your folder path
-                    if FileManager.default.fileExists(atPath: folder) == false {
-                        try FileManager.default.createDirectory(atPath: folder, withIntermediateDirectories: true, attributes: nil)
-                    }
-                    let target: String = folder + url.lastPathComponent
-                    if FileManager.default.fileExists(atPath: target) {
-                        try FileManager.default.removeItem(atPath: target)
-                    }
-                    try FileManager.default.copyItem(atPath: url.path, toPath: target)
-                } catch let error {
-                    LLog(error)
-                }
-            }
-            completion()
-            #else
-            
-            if let url = url {
-                PHPhotoLibrary.shared().performChanges {
-                    PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-                } completionHandler: { _, _ in
-                    completion()
-                }
-            } else {
-                completion()
-            }
-            
-            #endif
-            
-        }
-    }
+    
     
     @objc func durationSliderValueChanged(slider: UISlider, event: UIEvent) {
         
@@ -574,6 +455,7 @@ class TestTrackView2: UIViewController {
     
     @objc func exportButtonDidTap(_ sender: UIBarButtonItem) {
         do {
+            // this should be using the videoClap in this vc - not inside vcplayer..... eg.exportVideoClap
             try self.vcplayer.enableManualRenderingMode()
             _ = self.vcplayer.export(size: KResolution720x1280) { (progress) in
                 LLog(progress.fractionCompleted)
@@ -664,7 +546,16 @@ extension TestTrackView2: (UIImagePickerControllerDelegate & UINavigationControl
                     videoTrack.mediaURL = url
                     self.trackBundle.videoTracks.append(videoTrack)
                     
+                    
+                    let model = VCImageTrackViewModel()
+                    model.timeControl = self.timeControl
+                    model.cellConfig = VideoCellConfig(videoTrack: videoTrack)
+                    model.cellSize = CGSize(width: height, height: height)
+                    models.append(model)
+                    
+                    reloadData(fix: false)
                     self.vcplayer.reload(time: .zero, closure: nil)
+                    attemptToRefreshScrollview()
                 }
                 
             case kUTTypeImage:
@@ -674,13 +565,21 @@ extension TestTrackView2: (UIImagePickerControllerDelegate & UINavigationControl
                         return lhs.timeRange.end < rhs.timeRange.end
                     }?.timeRange.end ?? .zero
                     
-                    let track = VCImageTrackDescription()
-                    track.id = UUID().uuidString
-                    track.timeRange = CMTimeRange(start: start.seconds, duration: 3.0)
-                    track.mediaURL = url
-                    self.trackBundle.imageTracks.append(track)
+                    let imageTrack = VCImageTrackDescription()
+                    imageTrack.id = UUID().uuidString
+                    imageTrack.timeRange = CMTimeRange(start: start.seconds, duration: 3.0)
+                    imageTrack.mediaURL = url
+                    self.trackBundle.imageTracks.append(imageTrack)
                     
+                    let model = VCImageTrackViewModel()
+                    model.timeControl = self.timeControl
+                    model.cellConfig = ImageCellConfig(imageTrack: imageTrack)
+                    model.cellSize = CGSize(width: height, height: height)
+                    models.append(model)
+                    
+                    reloadData(fix: false)
                     self.vcplayer.reload(time: .zero, closure: nil)
+                    attemptToRefreshScrollview()
                 }
                 
             default:
