@@ -20,6 +20,7 @@ import VideoClap
 import SSPlayer
 import MobileCoreServices
 import SVProgressHUD
+
 class TestTrackView2: UIViewController {
     
     var videoDescription: VCVideoDescription {
@@ -44,7 +45,7 @@ class TestTrackView2: UIViewController {
         return player
     }()
     
-//    var exportVideoClap = VideoClap()
+    var exportVideoClap = VideoClap()
     
     lazy var slider: UISlider = {
         let slider = UISlider()
@@ -112,9 +113,20 @@ class TestTrackView2: UIViewController {
         return view
     }()
     
+    
     var models: [VCImageTrackViewModel] = []
-    /*lazy var models: [VCImageTrackViewModel] = {
-        var models: [VCImageTrackViewModel] = []
+        
+    lazy var pinchGR: UIPinchGestureRecognizer = {
+        let pinchGR = UIPinchGestureRecognizer(target: self, action: #selector(pinchGRHandler(_:)))
+        return pinchGR
+    }()
+    
+    let height: CGFloat = 120
+    
+    let timeControl: VCTimeControl = VCTimeControl()
+    
+    func populateModels(){
+        print("PRE-populating videos")
         for index in 0..<8 {
             if Bool.random() {
                 let videoTrack = VCVideoTrackDescription()
@@ -127,6 +139,9 @@ class TestTrackView2: UIViewController {
                 let source = CMTimeRange(start: 0, end: duration.seconds)
                 let target = CMTimeRange(start: start.seconds, duration: source.duration.seconds)
                 videoTrack.timeMapping = CMTimeMapping(source: source, target: target)
+                // actually add it
+                trackBundle.videoTracks.append(videoTrack)
+                
                 let model = VCImageTrackViewModel()
                 model.timeControl = self.timeControl
                 model.cellConfig = VideoCellConfig(videoTrack: videoTrack)
@@ -143,6 +158,11 @@ class TestTrackView2: UIViewController {
                 let source = CMTimeRange(start: 0, end: duration.seconds)
                 let target = CMTimeRange(start: start.seconds, duration: source.duration.seconds)
                 videoTrack.timeMapping = CMTimeMapping(source: source, target: target)
+                
+                // actually add it
+                trackBundle.videoTracks.append(videoTrack)
+                
+                
                 let model = VCImageTrackViewModel()
                 model.timeControl = self.timeControl
                 model.cellConfig = VideoCellConfig(videoTrack: videoTrack)
@@ -159,6 +179,10 @@ class TestTrackView2: UIViewController {
                     start = models[index - 1].cellConfig!.targetTimeRange()!.end
                 }
                 imageTrack.timeRange = CMTimeRange(start: start.seconds, duration: 3.0)
+                
+                // actually add it
+                trackBundle.imageTracks.append(imageTrack)
+                
                 let model = VCImageTrackViewModel()
                 model.timeControl = self.timeControl
                 model.cellConfig = ImageCellConfig(imageTrack: imageTrack)
@@ -172,6 +196,10 @@ class TestTrackView2: UIViewController {
                     start = models[index - 1].cellConfig!.targetTimeRange()!.end
                 }
                 imageTrack.timeRange = CMTimeRange(start: start.seconds, duration: 3.0)
+                
+                // actually add it
+                trackBundle.imageTracks.append(imageTrack)
+                
                 let model = VCImageTrackViewModel()
                 model.timeControl = self.timeControl
                 model.cellConfig = ImageCellConfig(imageTrack: imageTrack)
@@ -179,20 +207,14 @@ class TestTrackView2: UIViewController {
                 models.append(model)
             }
         }
-        return models
-    }()*/
-    
-    lazy var pinchGR: UIPinchGestureRecognizer = {
-        let pinchGR = UIPinchGestureRecognizer(target: self, action: #selector(pinchGRHandler(_:)))
-        return pinchGR
-    }()
-    
-    let height: CGFloat = 120
-    
-    let timeControl: VCTimeControl = VCTimeControl()
-    
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
+        VideoClap.cleanExportFolder()
+        
+        populateModels()
+        
+        
         view.addSubview(scrollView)
         scrollView.addSubview(scaleView)
         scrollView.addSubview(mainTrackView)
@@ -222,14 +244,76 @@ class TestTrackView2: UIViewController {
         reloadData(fix: false)
         setupUI()
         videoDescription.fps = 24.0
-        videoDescription.renderScale = 1
+        videoDescription.renderScale = UIScreen.main.scale
         videoDescription.renderSize = KResolution720x1280
         addPeriodicTimeObserver()
         
         
-        exportButtonDidTap(nil)
+        
+        
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        export(fileName: "test.mp4"){}
+    }
+    
+    func export(fileName: String?, completion: @escaping () -> Void) {
+        print("videoDescription.trackBundle:",videoDescription.trackBundle)
+        let trackBundle = videoDescription.trackBundle
+        if (trackBundle.audioTracks.count == 0) && (trackBundle.videoTracks.count == 0) &&  (trackBundle.imageTracks.count == 0) {
+            print("FATAL:no audio / video or image tracks!!")
+           
+        }
+        
+        exportVideoClap.videoDescription = self.videoDescription.mutableCopy() as! VCVideoDescription
+        exportVideoClap.videoDescription.renderSize = KResolution1920x1080
+        exportVideoClap.videoDescription.renderScale = 1 //UIScreen.main.scale
+        
+        exportVideoClap.export { (progress) in
+            print(progress.fractionCompleted, fileName ?? "")
+            SVProgressHUD.showProgress(Float(progress.fractionCompleted), status: "Building...")
+        } completionHandler: { (url, error) in
+            if let error = error {
+                LLog(error)
+            }
+            SVProgressHUD.dismiss()
+            
+            #if targetEnvironment(simulator)
+            
+            if let url = url {
+                do {
+                    let folder = "/Users/laimincong/Desktop/Temp/Videos/" // replace your folder path
+                    if FileManager.default.fileExists(atPath: folder) == false {
+                        try FileManager.default.createDirectory(atPath: folder, withIntermediateDirectories: true, attributes: nil)
+                    }
+                    let target: String = folder + url.lastPathComponent
+                    if FileManager.default.fileExists(atPath: target) {
+                        try FileManager.default.removeItem(atPath: target)
+                    }
+                    try FileManager.default.copyItem(atPath: url.path, toPath: target)
+                } catch let error {
+                    LLog(error)
+                   
+                }
+            }
+            completion()
+            #else
+            
+            if let url = url {
+                PHPhotoLibrary.shared().performChanges {
+                    PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+                } completionHandler: { _, _ in
+                    completion()
+                }
+            } else {
+                completion()
+            }
+            
+            #endif
+            
+        }
+    }
     
     // THIS DOESN'T WORK - need to pinch the scrollview to get the view to refresh properly. WHY??
     func attemptToRefreshScrollview(){
@@ -503,8 +587,9 @@ class TestTrackView2: UIViewController {
     }
     
     @objc func exportButtonDidTap(_ sender: UIBarButtonItem?) {
-        
-        let tracks = self.trackBundle.imageTracks + self.trackBundle.videoTracks
+        export(fileName: "test.mp4"){}
+        return
+       /* let tracks = self.trackBundle.imageTracks + self.trackBundle.videoTracks
         if (tracks.count == 0 ){
             print("FATAL - no tracks")
             return
@@ -536,8 +621,10 @@ class TestTrackView2: UIViewController {
             playButton.isSelected = false
         } catch let error {
             LLog(error)
-        }
+        }*/
     }
+    
+    
     
     @objc func addButtonDidTap(_ sender: UIBarButtonItem) {
         self.perform(#selector(presentImport), with: nil, afterDelay: 0.1) // avoid ui blocking
@@ -567,13 +654,18 @@ extension TestTrackView2: UIScrollViewDelegate {
         scaleView.reloadData(in: visibleRect())
         mainTrackView.reloadData(in: visibleRect())
         
-//        if player.isPlaying{
-            let duration = player.currentItem?.asset.duration ?? CMTime(seconds: 1.0)
-//        let time = CMTime(seconds: duration.seconds * Double(percentage))
+
+        
+        let duration = player.currentItem?.asset.duration ?? CMTime(seconds: 1.0)
         var progress =  NowPlayingProgress()
         progress.duration = duration.seconds
+        let elaspsedTime = CMTime(seconds: duration.seconds * Double(percentage))
         progress.elapsedTime =  Double( duration.seconds * Double(percentage))
         self.progressBar.progress = progress
+        if !player.isPlaying{
+//            player.seek(to: elaspsedTime)// this causes things to break
+        }
+        
 //            player.seekSmoothly(to: time) { [weak self] _ in
 ////                guard let self = self else { return }
 //              //  self.timer()
