@@ -22,7 +22,7 @@ public class VCTimeControl: NSObject {
     
     public private(set) lazy var maxScale: CGFloat = 12000
     
-    public let minScale: CGFloat = 30
+    public let minScale: CGFloat = 800
     
     public internal(set) var widthPerBaseValue: CGFloat = 0
     

@@ -111,7 +111,7 @@ class TestTrackView2: UIViewController {
     
     lazy var models: [VCImageTrackViewModel] = {
         var models: [VCImageTrackViewModel] = []
-        for index in 0..<2 {
+        for index in 0..<8 {
             if Bool.random() {
                 let videoTrack = VCVideoTrackDescription()
                 videoTrack.mediaURL = resourceURL(filename: "video1.mp4")
@@ -146,10 +146,10 @@ class TestTrackView2: UIViewController {
                 models.append(model)
             }
         }
-        for index in 0..<4 {
+        for index in 0..<2 {
             if Bool.random() {
                 let imageTrack = VCImageTrackDescription()
-                imageTrack.mediaURL = resourceURL(filename: "test4.jpg")
+                imageTrack.mediaURL = resourceURL(filename: "4.jpg")
                 var start: CMTime = .zero
                 if (0..<models.count).contains(index - 1) {
                     start = models[index - 1].cellConfig!.targetTimeRange()!.end
@@ -162,7 +162,7 @@ class TestTrackView2: UIViewController {
                 models.append(model)
             } else {
                 let imageTrack = VCImageTrackDescription()
-                imageTrack.mediaURL = resourceURL(filename: "test3.jpg")
+                imageTrack.mediaURL = resourceURL(filename: "3.jpg")
                 var start: CMTime = .zero
                 if (0..<models.count).contains(index - 1) {
                     start = models[index - 1].cellConfig!.targetTimeRange()!.end
@@ -218,11 +218,16 @@ class TestTrackView2: UIViewController {
         reloadData(fix: false)
         setupUI()
         videoDescription.fps = 24.0
-        videoDescription.renderScale = UIScreen.main.scale
-        videoDescription.renderSize = CGSize(width: view.bounds.width * ratio, height: view.bounds.width)
+        videoDescription.renderScale = 1
+        videoDescription.renderSize = KResolution720x1280
         
         
-        player.videoDescription = videoDescription
+
+        mergeClipsRenderDown()
+    }
+    
+    func mergeClipsRenderDown(){
+        export(fileName: "test.mp4") { }
     }
     func setupNavBar() {
         navigationItem.rightBarButtonItems = [exportButton, addButton]
