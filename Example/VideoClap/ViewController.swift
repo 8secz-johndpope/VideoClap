@@ -73,12 +73,12 @@ class ViewController: UIViewController {
     }()
     
     lazy var exportButton: UIBarButtonItem = {
-        let item = UIBarButtonItem(title: "导出", style: .plain, target: self, action: #selector(exportButtonDidTap))
+        let item = UIBarButtonItem(title: "export", style: .plain, target: self, action: #selector(exportButtonDidTap))
         return item
     }()
     
     lazy var addButton: UIBarButtonItem = {
-        let item = UIBarButtonItem(title: "添加", style: .plain, target: self, action: #selector(addButtonDidTap))
+        let item = UIBarButtonItem(title: "add", style: .plain, target: self, action: #selector(addButtonDidTap))
         return item
     }()
     
@@ -131,7 +131,7 @@ class ViewController: UIViewController {
             let target = CMTimeRange(start: 5.0, end: 6.0)
             track.timeMapping = CMTimeMapping(source: source, target: target)
             track.mediaURL = resourceURL(filename: "video0.mp4")
-            track.lutImageURL = resourceURL(filename: "lut_filter_27.jpg")
+            track.lutImageURL = resourceURL(filename: "blue_LUT2.jpg")
             trackBundle.videoTracks.append(track)
         }
         
@@ -147,7 +147,7 @@ class ViewController: UIViewController {
             let target = CMTimeRange(start: 6, end: 10.0)
             track.timeMapping = CMTimeMapping(source: source, target: target)
             track.mediaURL = resourceURL(filename: "video0.mp4")
-//            track.lutImageURL = resourceURL(filename: "lut_filter_27.jpg")
+            track.lutImageURL = resourceURL(filename: "black_LUT2.jpg")
             trackBundle.videoTracks.append(track)
         }
         
@@ -173,7 +173,7 @@ class ViewController: UIViewController {
             let source = CMTimeRange(start: 0, end: 10.0)
             let target = CMTimeRange(start: 0, end: 10.0)
             track.timeMapping = CMTimeMapping(source: source, target: target)
-            track.mediaURL = resourceURL(filename: "02.Ellis - Clear My Head (Radio Edit) [NCS].mp3")
+            track.mediaURL = resourceURL(filename: "test.mp3")
             if #available(iOS 11.0, *) {
                 track.audioEffectProvider = VCChildrenAudioEffectProvider()
             } else {
@@ -221,11 +221,13 @@ class ViewController: UIViewController {
             textTrack.id = "textTrack"
             textTrack.imageLayout = .center(CGPoint(x: 0.5, y: 0.5))
             textTrack.timeRange = CMTimeRange(start: 0.0, end: 10.0)
-            textTrack.textEffectProvider = VCRotationTextEffect(rotationType: .rotate(25.0))
+//            VCTextEffectRenderContext
+            textTrack.textEffectProvider = VCGlitchTextEffect()
+//            )
 //            textTrack.rotateRadian = .pi * 0.15
-            textTrack.text = AttributedStringBuilder(text: "按键或把手把字和符号打印在纸上的机械，有手打和电打两种。\n在大多数办公室，电脑已经取代了打字机。\n她拿起一张纸，把它哗哗啦啦地塞到打字机中。")
-//                .addAttributes(value: [.foregroundColor : UIColor.clear, .font : UIFont.systemFont(ofSize: 90, weight: .bold), .strokeWidth: -3.0, .strokeColor: UIColor.blue])
-                .addAttributes(value: [.foregroundColor : UIColor.red, .font : UIFont.systemFont(ofSize: 40, weight: .bold)])
+            textTrack.text = AttributedStringBuilder(text: "There are two types of machines that use keys or handles to print words and symbols on paper. \nIn most offices, computers have replaced typewriters. \nShe picked up a piece of paper and shuffled it into the typewriter。")
+                .addAttributes(value: [.foregroundColor : UIColor.clear, .font : UIFont.systemFont(ofSize: 90, weight: .bold), .strokeWidth: -3.0, .strokeColor: UIColor.blue])
+//                .addAttributes(value: [.foregroundColor : UIColor.red, .font : UIFont.systemFont(ofSize: 40, weight: .bold)])
                 .build()
             trackBundle.imageTracks.append(textTrack)
         }
@@ -233,10 +235,10 @@ class ViewController: UIViewController {
         do {
             let gifTrack = VCGIFTrackDescription()
             gifTrack.indexPath = IndexPath(item: 0, section: 1001)
-            let rect = VCRect(x: 0.5, y: 0.5, width: .random(in: 0..<1.0), height: .random(in: 0..<1.0))
+            let rect = VCRect(x: 0.5, y: 0.5, width: .random(in: 0..<0.5), height: .random(in: 0..<0.5))
             gifTrack.imageLayout = .rect(rect)
             gifTrack.id = "gifTrack"
-            gifTrack.timeRange = CMTimeRange(start: 0.0, end: 30.0)
+            gifTrack.timeRange = CMTimeRange(start: 0.0, end: 4.0)
             gifTrack.mediaURL = resourceURL(filename: "d6943138af1.gif")
             trackBundle.imageTracks.append(gifTrack)
         }

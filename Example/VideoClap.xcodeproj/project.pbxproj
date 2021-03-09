@@ -10,15 +10,14 @@
 		2BFFF2E8C52CD256CBC889BD /* Pods_VideoClap_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F37C55F6C6452329825B51C3 /* Pods_VideoClap_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
+		83BBC39C25F72B0200471D25 /* Mat in Resources */ = {isa = PBXBuildFile; fileRef = 83BBC39B25F72B0200471D25 /* Mat */; };
 		8A0D4E172585E2A100C08E7D /* TestTimeScaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0D4E162585E2A100C08E7D /* TestTimeScaleView.swift */; };
 		8A138D692554D55B0088ECA8 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8A138D5C2554D55B0088ECA8 /* LaunchScreen.xib */; };
 		8A138D6A2554D55B0088ECA8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A138D5E2554D55B0088ECA8 /* Main.storyboard */; };
 		8A138D6D2554D55B0088ECA8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A138D622554D55B0088ECA8 /* Images.xcassets */; };
-		8A138D842554D7010088ECA8 /* Mat in Resources */ = {isa = PBXBuildFile; fileRef = 8A138D832554D7010088ECA8 /* Mat */; };
 		8A8CE53B255176E0002E935C /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8CE53A255176E0002E935C /* Util.swift */; };
 		8A8D9FCC25E338040015113A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8D9FCB25E338040015113A /* MainViewController.swift */; };
 		8A9AACA425E51DD20042F57E /* MetalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9AACA325E51DD20042F57E /* MetalViewController.swift */; };
-		8AAF3B1F258CB26600C0F790 /* TestTrackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAF3B1E258CB26600C0F790 /* TestTrackView.swift */; };
 		8AC694902551606A00CD1D6D /* TestWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC6948F2551606A00CD1D6D /* TestWindow.swift */; };
 		8AE8760325EC8D89005526A1 /* TestTrackView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8760225EC8D89005526A1 /* TestTrackView2.swift */; };
 /* End PBXBuildFile section */
@@ -31,16 +30,15 @@
 		607FACD71AFB9204008FA782 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		63582D203B7662CDBC3A8E75 /* Pods-VideoClap_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VideoClap_Example.debug.xcconfig"; path = "Target Support Files/Pods-VideoClap_Example/Pods-VideoClap_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		715BDF5ABDB427DCF1B874B9 /* VideoClap.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = VideoClap.podspec; path = ../VideoClap.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		83BBC39B25F72B0200471D25 /* Mat */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Mat; path = ../../../Mat; sourceTree = "<group>"; };
 		8A0D4E162585E2A100C08E7D /* TestTimeScaleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestTimeScaleView.swift; sourceTree = "<group>"; };
 		8A138D5D2554D55B0088ECA8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		8A138D5F2554D55B0088ECA8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8A138D622554D55B0088ECA8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		8A138D642554D55B0088ECA8 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8A138D832554D7010088ECA8 /* Mat */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Mat; path = ../../../../Mat; sourceTree = "<group>"; };
 		8A8CE53A255176E0002E935C /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		8A8D9FCB25E338040015113A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		8A9AACA325E51DD20042F57E /* MetalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalViewController.swift; sourceTree = "<group>"; };
-		8AAF3B1E258CB26600C0F790 /* TestTrackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestTrackView.swift; sourceTree = "<group>"; };
 		8AC6948F2551606A00CD1D6D /* TestWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestWindow.swift; sourceTree = "<group>"; };
 		8AE8760225EC8D89005526A1 /* TestTrackView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestTrackView2.swift; sourceTree = "<group>"; };
 		96E95A14EE0F218F43EEE3A2 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -88,7 +86,6 @@
 				8A8D9FCB25E338040015113A /* MainViewController.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				8A0D4E162585E2A100C08E7D /* TestTimeScaleView.swift */,
-				8AAF3B1E258CB26600C0F790 /* TestTrackView.swift */,
 				8A9AACA325E51DD20042F57E /* MetalViewController.swift */,
 				8AE8760225EC8D89005526A1 /* TestTrackView2.swift */,
 			);
@@ -117,7 +114,7 @@
 		8A138D582554D55B0088ECA8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				8A138D832554D7010088ECA8 /* Mat */,
+				83BBC39B25F72B0200471D25 /* Mat */,
 				8A138D5C2554D55B0088ECA8 /* LaunchScreen.xib */,
 				8A138D5E2554D55B0088ECA8 /* Main.storyboard */,
 				8A138D622554D55B0088ECA8 /* Images.xcassets */,
@@ -169,7 +166,7 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
-						DevelopmentTeam = Q9SCFYBQN5;
+						DevelopmentTeam = 48K8QNQU37;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
@@ -200,8 +197,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A138D692554D55B0088ECA8 /* LaunchScreen.xib in Resources */,
-				8A138D842554D7010088ECA8 /* Mat in Resources */,
 				8A138D6D2554D55B0088ECA8 /* Images.xcassets in Resources */,
+				83BBC39C25F72B0200471D25 /* Mat in Resources */,
 				8A138D6A2554D55B0088ECA8 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -269,7 +266,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A8D9FCC25E338040015113A /* MainViewController.swift in Sources */,
-				8AAF3B1F258CB26600C0F790 /* TestTrackView.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				8AC694902551606A00CD1D6D /* TestWindow.swift in Sources */,
@@ -408,7 +404,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Q9SCFYBQN5;
+				DEVELOPMENT_TEAM = 48K8QNQU37;
 				INFOPLIST_FILE = VideoClap/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -431,7 +427,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Q9SCFYBQN5;
+				DEVELOPMENT_TEAM = 48K8QNQU37;
 				INFOPLIST_FILE = VideoClap/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
