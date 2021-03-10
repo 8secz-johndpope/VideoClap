@@ -136,7 +136,7 @@ class TestTrackView2: UIViewController {
     
     func populateModels(){
         print("PRE-populating videos")
-        for index in 0..<8 {
+        for index in 0..<2 {
             if Bool.random() {
                 let videoTrack = VCVideoTrackDescription()
                 videoTrack.mediaURL = resourceURL(filename: "video1.mp4")
@@ -297,7 +297,7 @@ class TestTrackView2: UIViewController {
             self.timer()
         }
         
-        player.play()
+//        player.play()
     }
     
     
@@ -365,7 +365,7 @@ class TestTrackView2: UIViewController {
         }
     }
     
-    // THIS DOESN'T WORK - need to pinch the scrollview to get the view to refresh properly. WHY??
+    
     func attemptToRefreshScrollview(){
         DispatchQueue.main.async {
             print("BEGIN")
@@ -383,12 +383,12 @@ class TestTrackView2: UIViewController {
             self.timeControl.setTime(currentTime:CMTime(seconds: 0))
             
             self.scaleView.reloadData(in: self.visibleRect())
-//            self.mainTrackView.collectionView.reloadData()
-            self.mainTrackView.reloadData(in: self.visibleRect())
+
             self.vcplayer.reload()
             self.vcplayer.reloadFrame()
             
             self.scrollViewDidScroll(self.scrollView)
+            self.reloadData(fix: false)
             
             
         }
@@ -766,7 +766,12 @@ extension TestTrackView2: (UIImagePickerControllerDelegate & UINavigationControl
                     videoTrack.sourceTimeRange = CMTimeRange(start: .zero, duration: asset.duration.seconds)
                     videoTrack.timeRange = CMTimeRange(start: start.seconds, duration: asset.duration.seconds)
                     videoTrack.mediaURL = url
+                    let source = CMTimeRange(start: 0, end: asset.duration.seconds)
+                    let target = CMTimeRange(start: start.seconds, duration: source.duration.seconds)
+                    videoTrack.timeMapping = CMTimeMapping(source: source, target: target)
+                    
                     self.trackBundle.videoTracks.append(videoTrack)
+                    
                     
                     
                     let model = VCImageTrackViewModel()
