@@ -7,7 +7,7 @@
 
 import AVFoundation
 
-public enum VCImageLayout {
+public enum VCImageLayout: Equatable {
     case fit
     case fill
     case center(CGPoint)
@@ -196,7 +196,7 @@ public class VCImageTrackDescription: NSObject, VCTrackDescriptionProtocol {
            let filterLutImage = self.image(url: lutImageURL, size: nil),
            filterIntensity.floatValue > 0.0
         {  // 查找表，添加滤镜
-            let lutFilter = VCLutFilter()
+            let lutFilter = VCLutFilter.share
             lutFilter.inputIntensity = filterIntensity
             lutFilter.inputImage = frame
             lutFilter.lookupImage = filterLutImage

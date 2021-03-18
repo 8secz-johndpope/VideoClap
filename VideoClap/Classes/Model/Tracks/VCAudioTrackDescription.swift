@@ -21,8 +21,6 @@ public class VCAudioTrackDescription: NSObject, VCMediaTrackDescriptionProtocol 
     
     public var audioVolumeRampDescriptions: [VCAudioVolumeRampDescription] = []
     
-    public var prefferdTransform: CGAffineTransform? = nil
-    
     public var mediaURL: URL? = nil
     
     public var id: String = ""
@@ -30,6 +28,8 @@ public class VCAudioTrackDescription: NSObject, VCMediaTrackDescriptionProtocol 
     public var audioEffectProvider: VCAudioEffectProviderProtocol?
     
     public internal(set) var processingFormat: AVAudioFormat?
+    
+    public internal(set) var maxFrames: CMItemCount?
     
     public override init() {
         super.init()
@@ -44,21 +44,16 @@ public class VCAudioTrackDescription: NSObject, VCMediaTrackDescriptionProtocol 
         copyObj.mediaURL                    = mediaURL
         copyObj.id                          = id
         copyObj.timeRange                   = timeRange
-        copyObj.prefferdTransform           = prefferdTransform
         copyObj.audioVolumeRampDescriptions = audioVolumeRampDescriptions
         copyObj.audioEffectProvider         = audioEffectProvider
         copyObj.sourceTimeRange             = sourceTimeRange
+        copyObj.processingFormat            = processingFormat
+        copyObj.maxFrames                   = maxFrames
         return copyObj
     }
     
     public func prepare(description: VCVideoDescription) {
-        guard let url = mediaURL else { return }
-        do {
-            let audioFile = try AVAudioFile(forReading: url)
-            processingFormat = audioFile.processingFormat
-        } catch let error {
-            log.warning(error)
-        }
+
     }
     
 }
